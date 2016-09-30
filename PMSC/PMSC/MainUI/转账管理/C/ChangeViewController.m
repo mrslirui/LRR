@@ -12,6 +12,9 @@
 #import "ChangeDetailViewController.h"
 #import "ChangeModel.h"
 @interface ChangeViewController ()<UITableViewDelegate,UITableViewDataSource,UITextFieldDelegate>
+{
+    int type;
+}
 @property(nonatomic,retain)ChangeView *cView;
 @property(nonatomic,retain)NSArray *arr1;
 @property(nonatomic,retain)NSArray *arr2;
@@ -165,6 +168,7 @@
 -(void)smallBtn:(UIButton *)sender
 {
 //    sender.selected = !sender.selected;
+    NSArray *arr6 =@[@"可获夺宝币:",@"可获积分:"];
     CGPoint correctedPoint =[sender convertPoint:sender.bounds.origin toView:self.cView.tableView];
     NSIndexPath *indexpath = [_cView.tableView indexPathForRowAtPoint:correctedPoint];
     NSLog(@"Button tapped in row %ld", indexpath.section);
@@ -173,21 +177,21 @@
     _currentCell.zhifubtn.selected = NO;
     [_currentCell.inputTf setEnabled:NO];
     _currentCell.inputTf.text = @" ";
-//    _currentCell.rJifenLabel.text = @"可获积分:";
+    _currentCell.rJifenLabel.text = arr6[indexpath.section];
     
     [cell.inputTf setEnabled:YES];
     cell.zhifubtn.selected = YES;
-    if(cell.selected)
-    {
-        cell.rJifenLabel.text = _arr5[indexpath.section];
-    }
-        _currentCell = cell;
+  
+    type = indexpath.section + 1;
+       NSLog(@"%d",type);
+    _currentCell = cell;
+    
 }
-
 
 -(void)change:(UIButton *)sender
 {
     //转换
+    NSLog(@"%@ %d",self.inputMoney,type);
 }
 -(void)cancel:(UIButton *)sender
 {
