@@ -11,15 +11,18 @@
 #import "ChangeTableViewCell.h"
 #import "ChangeDetailViewController.h"
 #import "ChangeModel.h"
-@interface ChangeViewController ()<UITableViewDelegate,UITableViewDataSource>
+@interface ChangeViewController ()<UITableViewDelegate,UITableViewDataSource,UITextFieldDelegate>
 @property(nonatomic,retain)ChangeView *cView;
 @property(nonatomic,retain)NSArray *arr1;
 @property(nonatomic,retain)NSArray *arr2;
 @property(nonatomic,retain)NSArray *arr3;
 @property(nonatomic,retain)NSArray *arr4;
+@property(nonatomic,retain)NSArray *arr5;
 @property (nonatomic, retain)ChangeTableViewCell *currentCell;
-
+@property(nonatomic,retain)NSString *scoreStr;
+@property(nonatomic,retain)NSString *duobaoStr;
 @property(nonatomic,retain)NSMutableArray *dataArr;
+@property(nonatomic,retain)NSString *inputMoney;
 
 @end
 
@@ -63,7 +66,10 @@
     self.arr1 = @[@"夺宝币转积分",@"积分转夺宝币"];
     self.arr2 = @[@"输入夺宝币",@"输入积分"];
     self.arr3 = @[@"d-j",@"j-d"];
-    self.arr4 = @[@"可获得夺宝币 :",@"可获得积分 :"];
+    self.arr5 =@[@"可获积分:",@"可获夺宝币:"];
+    self.scoreStr = [[NSUserDefaults standardUserDefaults] objectForKey:@"myMoney"][@"积分"];
+    self.duobaoStr = [[NSUserDefaults standardUserDefaults] objectForKey:@"myMoney"][@"夺宝币"];
+    self.arr4 = @[[NSString stringWithFormat:@"可用夺宝币 :%@ ",self.duobaoStr],[NSString stringWithFormat:@"可用夺宝币 :%@ ",self.scoreStr]];
     [self bottomView];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"详情" style:UIBarButtonItemStylePlain target:self action:@selector(xiangqing:)];
     [self loadData];
@@ -71,9 +77,8 @@
 -(void)loadData
 {
     [ChangeModel setWithBLOCK:^(id value) {
-       
+        [self.dataArr addObject: value[@"data"][@"scoredhb"]];
         [self.dataArr addObject:  value[@"data"][@"duobaodhb"]];
-         [self.dataArr addObject: value[@"data"][@"scoredhb"]];
         [self.cView.tableView reloadData];
     }];
 }
@@ -98,14 +103,15 @@
     cell.inputLabel.text = _arr2[indexPath.section];
     cell.rateLabel.text = [NSString stringWithFormat:@"汇率:%@",_dataArr[indexPath.section]];
     cell.reciveLabel.text = _arr4 [ indexPath.section];
-    cell.rJifenLabel.text = @"可获积分: 300";
+    cell.rJifenLabel.text = _arr5[indexPath.section];
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     [cell.zhifubtn setImage:[UIImage imageNamed:@"椭圆-1@3x"] forState:UIControlStateNormal];
     [cell.zhifubtn  setImage:[UIImage imageNamed:@"椭圆-1-副本-2@3x"] forState:UIControlStateSelected];
     [cell.zhifubtn addTarget:self action:@selector(smallBtn:) forControlEvents:UIControlEventTouchUpInside];
     cell.zhifubtn.tag = indexPath.section;
     [cell.inputTf setEnabled:NO];
-
+    [cell.inputTf addTarget:self action:@selector(textChange:) forControlEvents:UIControlEventEditingChanged];
+    cell.inputTf.delegate =self;
     return cell;
     
 }
@@ -140,23 +146,44 @@
     [canBtn addTarget:self action:@selector(cancel:) forControlEvents:UIControlEventTouchUpInside];
 
 }
+-(void)textChange:(UITextField *)textfield
+{
+    self.inputMoney = textfield.text;
+    
+   
+
+}
+-(void)textFieldDidEndEditing:(UITextField *)textField
+{
+    CGPoint correctedPoint =[textField convertPoint:textField.bounds.origin toView:self.cView.tableView];
+    NSIndexPath *indexpath = [_cView.tableView indexPathForRowAtPoint:correctedPoint];
+    NSLog(@"Button tapped in row %ld", indexpath.section);
+    
+    ChangeTableViewCell *cell = [_cView.tableView cellForRowAtIndexPath:indexpath];
+    cell.rJifenLabel.text = [NSString stringWithFormat:@"%@%@",_arr5[indexpath.section],self.inputMoney];
+}
 -(void)smallBtn:(UIButton *)sender
 {
 //    sender.selected = !sender.selected;
     CGPoint correctedPoint =[sender convertPoint:sender.bounds.origin toView:self.cView.tableView];
     NSIndexPath *indexpath = [_cView.tableView indexPathForRowAtPoint:correctedPoint];
-    NSLog(@"Button tapped in row %ld", indexpath.row);
-    
-    
+    NSLog(@"Button tapped in row %ld", indexpath.section);
+
     ChangeTableViewCell *cell = [_cView.tableView cellForRowAtIndexPath:indexpath];
     _currentCell.zhifubtn.selected = NO;
     [_currentCell.inputTf setEnabled:NO];
+    _currentCell.inputTf.text = @" ";
+//    _currentCell.rJifenLabel.text = @"可获积分:";
     
     [cell.inputTf setEnabled:YES];
     cell.zhifubtn.selected = YES;
-    
-    _currentCell = cell;
+    if(cell.selected)
+    {
+        cell.rJifenLabel.text = _arr5[indexpath.section];
+    }
+        _currentCell = cell;
 }
+
 
 -(void)change:(UIButton *)sender
 {

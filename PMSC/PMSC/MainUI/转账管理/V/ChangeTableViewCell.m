@@ -57,7 +57,7 @@
         _rJifenLabel.textColor = kAppColor;
         self.zhifubtn = [UIButton buttonWithType:UIButtonTypeCustom];
         [self.contentView addSubview:_zhifubtn];
-
+        [_inputTf setAutoAdjust: YES];
     }
     return self;
 }

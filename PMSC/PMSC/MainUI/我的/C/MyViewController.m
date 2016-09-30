@@ -113,6 +113,7 @@
     [self.myView.head sd_setImageWithURL:[NSURL URLWithString:returnValue[@"img"]] placeholderImage:[UIImage imageNamed:@"占位图方"]];
     self.myView.duobaoLb.text = [NSString stringWithFormat:@"余额: %@夺宝币",returnValue[@"money"]];
     self.myView.jifenLb.text = [NSString stringWithFormat:@"积分: %@",returnValue[@"score"]];
+    [[NSUserDefaults standardUserDefaults] setObject:@{@"夺宝币":returnValue[@"money"],@"积分":returnValue[@"score"]} forKey:@"myMoney"];
 }];
     
 }

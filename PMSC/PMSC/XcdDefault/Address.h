@@ -11,6 +11,14 @@ typedef void (^LOGINBLOCK) (void) ;/*** 成功返回回调 **/
 
 @interface Address : NSObject
 #define K_URL @"http://gangmaduobao.com/?"
+
+
+//下注
+#define Bet [NSString stringWithFormat:@"%@%@",K_URL,@"/api/paoma/bet"]
+
+//历史比赛记录
+#define Betlog [NSString stringWithFormat:@"%@%@",K_URL,@"/api/paoma/betlog"]
+
 //积分兑换
 #define ChangeManager [NSString stringWithFormat:@"%@%@",K_URL,@"/api/my/dhzs"]
 
@@ -114,6 +122,11 @@ typedef void (^LOGINBLOCK) (void) ;/*** 成功返回回调 **/
 #define homepage [NSString stringWithFormat:@"%@%@",K_URL,@"/api/paoma/homepage"]
 //帖子详情接口
 #define cdetail [NSString stringWithFormat:@"%@%@",K_URL,@"/api/card/json_cdetail"]
+//回帖
+#define Creply [NSString stringWithFormat:@"%@%@",K_URL,@"/api/card/json_creply"]
+
+
+/*** token验证 **/
 #define TOKEN  [[NSUserDefaults standardUserDefaults] objectForKey:@"token"]
 
 
